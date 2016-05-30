@@ -12,13 +12,14 @@
 		((and (> b a) (> c a)) (sum-square b c))
 		(else (sum-square a c))))
 
-; 1.5
-; On an environment use applicative-orde evaluation like lisp's environment
-; the test function will produce an infinite loop because lisp try to evaluate
-; the arguments before apply the test procedure to the arguments.
-; On an environment use normal-order evaluation i think the test procedure will
-; run fine because the if procedure only evaluate then-clause or else-clause if
-; needed after evaluate predicate.
+;;; 1.5
+;;; On an environment use applicative-orde evaluation like lisp's environment
+;;; the test function will produce an infinite loop because lisp try to evaluate
+;;; the arguments before apply the test procedure to the arguments.
+;;; On an environment use normal-order evaluation i think the test procedure will
+;;; run fine because the if procedure only evaluate then-clause or else-clause if
+;;; needed after evaluate predicate.
+
 (define (p) (p))
 
 (define (test x y)
@@ -44,16 +45,17 @@
 (define (sqrt x)
   (sqrt-iter 1.0 x))
 
-; 1.6:
-; Because lisp follow the aplicative-order
-; the program will not respect the if rule and will
-; evaluate all arguments before apply the procedure to the arguments
-; and run the recursive call no matter if good-enough? return #t or #f
-(define (new-if predicate then-clause else-clause)
-  (cond (predicate then-clause)
-		(else else-clause)))
+;;; 1.6:
+;;; Because lisp follow the aplicative-order
+;;; the program will not respect the if rule and will
+;;; evaluate all arguments before apply the procedure to the arguments
+;;; and run the recursive call no matter if good-enough? return #t or #f
 
-(define (sqrt-iter guess x)
-  (new-if (good-enough? guess x)
-		  guess
-		  (sqrt-iter (improve guess x) x)))
+;; (define (new-if predicate then-clause else-clause)
+;;   (cond (predicate then-clause)
+;; 		(else else-clause)))
+
+;; (define (sqrt-iter guess x)
+;;   (new-if (good-enough? guess x)
+;; 		  guess
+;; 		  (sqrt-iter (improve guess x) x)))
