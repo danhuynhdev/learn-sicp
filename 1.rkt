@@ -59,3 +59,77 @@
 ;;   (new-if (good-enough? guess x)
 ;; 		  guess
 ;; 		  (sqrt-iter (improve guess x) x)))
+
+;;; 1.7
+;;; For small numbers the use of 0.001 as biggest diff is not ok because the square
+;;; of guess can be smaller than 0.001. Ex: (sqrt 0.00000001) should be 0.0001 but
+;;; become 0.031250106... instead.
+;;; For big number i still don't know why but i guess it is because math on big
+;;; inexact number is slow and may be can't produce diff smaller than 0.001.
+;;; Ex: (sqrt 1E13) with diff 0.001 make an infinite loop but (sqrt 1E13) with diff
+;;; 0.01 -> 3162277.660...
+
+;; (define (good-enough? guess x)
+;;   (< (abs (- guess
+;; 			 (improve guess x)))
+;; 	 (/ guess 1000000)))
+
+;;; 1.8
+(define (cube-root x)
+  (define (improve guess)
+	(/ (+ (/ x (square guess))
+		  (* 2 guess))
+	   3))
+  (define (good-enough? guess)
+	(< (abs (- guess
+			   (improve guess)))
+	   (/ guess 1000000)))
+  (define (iter guess)
+	(if (good-enough? guess x)
+		guess
+		(iter (improve guess x) x)))
+  (iter 1.0))
+
+;;; 1.9
+
+;; (define (+a b)
+;;   (if (=a 0) b (inc (+ (dec a) b))))
+
+;;; (+ 4 5)
+;;; (inc (+ 3 5))
+;;; (inc (inc (+ 2 5)))
+;;; (inc (inc (inc (+ 1 5))))
+;;; (inc (inc (inc (inc (+ 0 5)))))
+;;; (inc (inc (inc (inc 5))))
+;;; (inc (inc (inc 6)))
+;;; (inc (inc 7))
+;;; (inc 8)
+;;; 9
+
+;; (define (+ a b)
+;;   (if (= a 0) b (+ (dec a) (inc b))))
+
+;;; (+ 4 5)
+;;; (+ 3 6)
+;;; (+ 2 7)
+;;; (+ 1 8)
+;;; (+ 0 9)
+;;; 9
+
+;;; procedure 1 is recursive. procedure 2 is iterative
+
+;;; 1.10
+
+(define (A x y)
+  (cond ((= y 0) 0)
+		((= x 0) (* 2 y))
+		((= y 1) 2)
+		(else (A (- x 1) (A x (- y 1))))))
+
+;;; (A 1 10) -> 2 ** 10
+;;; (A 2 4) -> 2 ** 16
+;;; (A 3 3) -> 2 ** 16
+
+;;; (define (f n) (A 0 n)) -> 2 * n
+;;; (define (g n) (A 1 n)) -> 2 ** n
+;;; (define (h n) (A 2 n)) -> 2 ** 2 ** 2 ** ... With n numbers 2
