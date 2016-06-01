@@ -133,3 +133,75 @@
 ;;; (define (f n) (A 0 n)) -> 2 * n
 ;;; (define (g n) (A 1 n)) -> 2 ** n
 ;;; (define (h n) (A 2 n)) -> 2 ** 2 ** 2 ** ... With n numbers 2
+
+;;; Fibonacci
+
+(define (fib n)
+  (fib-iter 1 0 n))
+(define (fib-iter a b count)
+  (if (= count 0)
+	  b
+	  (fib-iter (+ a b) a (dec count))))
+
+;;; Count change
+
+(define (count-change amount) (cc amount 5))
+(define (cc amount kinds-of-coins)
+  (cond ((= amount 0) 1)
+		((or (< amount 0) (= kinds-of-coins 0)) 0)
+		(else (+ (cc amount
+					 (- kinds-of-coins 1))
+				 (cc (- amount
+						(first-denomination
+						 kinds-of-coins))
+					 kinds-of-coins)))))
+(define (first-denomination kinds-of-coins)
+  (cond ((= kinds-of-coins 1) 1)
+		((= kinds-of-coins 2) 5)
+		((= kinds-of-coins 3) 10)
+		((= kinds-of-coins 4) 25)
+		((= kinds-of-coins 5) 50)))
+
+;;; 1.11
+(define (compute-f-recursive n)
+  (if (< n 3)
+	  n
+	  (+ (compute-f-recursive (- n 1))
+		 (* 2
+			(compute-f-recursive (- n 2)))
+		 (* 3
+			(compute-f-recursive (- n 3))))))
+
+(define (compute-f n)
+  (define (iter f+2 f+1 f n)
+	(if (= n 0)
+		f
+		(iter (+ f+2
+				 (* 2 f+1)
+				 (* 3 f))
+			  f+2
+			  f+1
+			  (dec n))))
+  (iter 2 1 0 n))
+
+;;; 1.12
+
+(define (pascal-triangle row col)
+  (cond ((or (> col row)
+			 (< col 0)) 0)
+		((= col 0) 1)
+		(else (+ (pascal-triangle (dec row) (dec col))
+				 (pascal-triangle (dec row) col)))))
+
+(define (pascal height)
+  (define (iter row col height)
+	(if (> height 0)
+		(if (> col row)
+			(begin
+			  (display "\n")
+			  (iter (+ row 1) 0 (- height 1)))
+			(begin
+			  (display (pascal-triangle row col))
+			  (display " ")
+			  (iter row (+ col 1) height)))))
+  (iter 0 0 height))
