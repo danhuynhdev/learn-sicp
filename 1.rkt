@@ -20,10 +20,10 @@
 ;;; run fine because the if procedure only evaluate then-clause or else-clause if
 ;;; needed after evaluate predicate.
 
-(define (p) (p))
+;; (define (p) (p))
 
-(define (test x y)
-  (if (= x 0) 0 y))
+;; (define (test x y)
+;;   (if (= x 0) 0 y))
 
 ; Ex 1.1.7 Square root by newton's method
 (define (average x y)
@@ -205,3 +205,125 @@
 			  (display " ")
 			  (iter row (+ col 1) height)))))
   (iter 0 0 height))
+
+;;; 1.14
+;;; 10 5 -> 10-50 5 -> 0
+;;; `- 10 4 -> 10-25 4 -> 0
+;;;     `-> 10 3 -> 10-10 3 -> 1
+;;;          `-> 10 2 -> 10-5 2 -> 5-5 2 -> 1
+;;;              \        `-> 5 1 ->5-1 1 ->4-1 1 ->3-1 1 -> 2-1 1 -> 1-1 1 -> 0 1 -> 1
+;;;               10 1        `>0   `> 0     `>0      `> 0     `> 0      `>0      `> 0
+;;;                `> 10 ... -> 1
+;;;                   `-> 0
+;;; Ans -> 4
+;;; O(n^k) with k = kinds of coins don't need much explaination i just read it
+;;; from a article :p like those mathetical stuff. I wanna learn fp not math.
+
+;;; 1.15
+
+;; (define (cube x) (* x x x))
+;; (define (p x) (- (* 3 x) (* 4 (cube x))))
+;; (define (sine angle)
+;;   (if (not (> (abs angle) 0.1))
+;; 	  angle
+;; 	  (p (sine (/ angle 3.0)))))
+
+;;; 5 (/ 12.05 3 3 3 3 3) -> 0.0499.. < 0.1
+;;; i think it is O(log(n))
+
+;;; Exponentiation
+
+;; (define (expt b n)
+;;   (if (= n 0)
+;; 	  1
+;; 	  (* b (expt b (- n 1)))))
+
+;; (define (expt b n)
+;;   (expt-iter b n 1))
+;; (define (expt-iter b counter product)
+;;   (if (= counter 0)
+;; 	  product
+;; 	  (expt-iter b
+;; 				 (- counter 1)
+;; 				 (* b product))))
+
+;; (define (fast-expt b n)
+;;   (cond ((= n 0) 1)
+;; 		((even? n) (square (fast-expt b (/ n 2))))
+;; 		(else (* b (fast-expt b (- n 1))))))
+
+;; (define (even? n)
+;;   (= (remainder n 2) 0))
+
+;;; 1.16
+
+;; (define (fast-expt b n)
+;;   (fast-expt-iter b n 1))
+
+;; (define (fast-expt-iter b n a)
+;;   (cond ((= n 0) a)
+;; 		((even? n) (fast-expt-iter (square b) (/ n 2) a))
+;; 		(else (fast-expt-iter b (- n 1) (* a b)))))
+
+;;; 1.17
+;;; a*b = a*2 * (b/2) if b is even
+;;; a*b = a*(b-1) + a if b is odd
+
+;;; 1.18
+
+;; (define (double x) (+ x x))
+;; (define (halve x) (/ x 2))
+
+;; (define (* a b)
+;;   (define (iter a b n)
+;; 	(cond ((= b 0) n)
+;; 		  ((even? b) (iter (double a) (halve b) n))
+;; 		  (else (iter a (- b 1) (+ n a)))))
+;;   (iter a b 0))
+
+;;; 1.19
+
+(define (fast-fib n)
+  (fast-fib-iter 1 0 0 1 n))
+(define (fast-fib-iter a b p q count)
+  (cond ((= count 0) b)
+		((even? count)
+		 (fast-fib-iter a
+						b
+						(+ (square q) (square p))
+						(+ (* 2 q p) (square q))
+						(/ count 2)))
+		(else (fast-fib-iter (+ (* b q) (* a q) (* a p))
+							 (+ (* b p) (* a q))
+							 p
+							 q
+							 (- count 1)))))
+
+;;; GCD
+
+(define (gcd a b)
+  (if (= b 0)
+	  a
+	  (gcd b (remainder a b))))
+
+;;; 1.20
+;;; (gcd 206 40) 1 -> (gcd 40 6) 1 -> (gcd 6 4) 1 -> (gcd 4 2) 1 -> (gcd 2 0) -> 2
+;;; applicative-order: 4
+;;; normal-order: a lot. Such a waste of time to count.
+
+;;; Searching for divisors
+
+(define (smallest-divisor n) (find-divisor n 2))
+
+;;; test test-divisor from 2 to (sqrt n) till it devides b. If can't find divisor then
+;;; return n.
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+		((divides? test-divisor n) test-divisor)
+		(else (find-divisor n (+ test-divisor 1)))))
+
+(define (divides? a b) (= (remainder b a) 0))
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
