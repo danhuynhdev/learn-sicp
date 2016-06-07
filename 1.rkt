@@ -49,7 +49,7 @@
 ;;; Because lisp follow the aplicative-order
 ;;; the program will not respect the if rule and will
 ;;; evaluate all arguments before apply the procedure to the arguments
-;;; and run the recursive call no matter if good-enough? return #t or #f
+;;; and run the recursive call no matter if good-enough? return true or false
 
 ;; (define (new-if predicate then-clause else-clause)
 ;;   (cond (predicate then-clause)
@@ -347,9 +347,9 @@
   (try-it (+ 1 (random (- n 1)))))
 
 (define (fast-prime? n times)
-  (cond ((= times 0) #t)
+  (cond ((= times 0) true)
 		((fermat-test n) (fast-prime? n (- times 1)))
-		(else #f)))
+		(else false)))
 
 ;;; 1.21
 
@@ -451,10 +451,10 @@
 ;;; 1.27
 ;; (define (carmichael-test n)
 ;;   (define (iter a pass?)
-;; 	(cond ((= a 0) #t)
+;; 	(cond ((= a 0) true)
 ;; 		  (pass? (iter (- a 1) (= (expmod a n n) a)))
-;; 		  (else #f)))
-;;   (iter (- n 1) #t))
+;; 		  (else false)))
+;;   (iter (- n 1) true))
 
 ;; (carmichael-test 561)
 ;; (carmichael-test 1105)
