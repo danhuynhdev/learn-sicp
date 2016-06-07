@@ -350,3 +350,46 @@
   (cond ((= times 0) #t)
 		((fermat-test n) (fast-prime? n (- times 1)))
 		(else #f)))
+
+;;; 1.21
+
+;; (smallest-divisor 199) -> 199
+;; (smallest-divisor 1999) -> 1999
+;; (smallest-divisor 19999) -> 7
+
+;;; 1.22
+
+(define (timed-prime-test n)
+  (newline)
+  (display n)
+  (start-prime-test n (runtime)))
+(define (start-prime-test n start-time)
+  (if (prime? n)
+	  (report-prime (- (runtime) start-time))))
+(define (report-prime elapsed-time)
+  (display " *** ")
+  (display elapsed-time))
+
+(define (search-for-primes n)
+  (define (iter n count)
+	(if (< count 3)
+		(if (and (prime? n) (timed-prime-test n))
+			(iter (+ n 2) (+ count 1))
+			(iter (+ n 2) count))))
+  (iter (+ n 1) 0))
+
+;;; (search-for-primes 1000)
+;;; 1009 *** 6
+;;; 1013 *** 4
+;;; 1019 *** 5
+;;; (search-for-primes 10000)
+;;; 10007 *** 16
+;;; 10009 *** 12
+;;; 10037 *** 14
+;;; (search-for-primes 100000)
+;;; 100003 *** 42
+;;; 100019 *** 36
+;;; 100043 *** 35
+
+;;; I think the result is pretty ok. For example 1013 compute in 4 microseconds
+;;; and 10009 compute in 12 microseconds exactly equal (* 4 (sqrt 10)).
