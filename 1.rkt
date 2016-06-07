@@ -350,8 +350,6 @@
   (cond ((= times 0) #t)
 		((fermat-test n) (fast-prime? n (- times 1)))
 		(else #f)))
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 ;;; 1.21
 
@@ -445,3 +443,19 @@
 ;;; The result will stay the same but if we use her way it will take a lot longer
 ;;; to compute because fast-expt will produce a very big number and doing math
 ;;; stuff on big numbers is very expensive to the machines.
+
+;;; 1.26
+;;; When she do that because lisp follow applicative-order it will execute expmod
+;;; twice instead of once like in the original procedure.
+
+;;; 1.27
+;; (define (carmichael-test n)
+;;   (define (iter a pass?)
+;; 	(cond ((= a 0) #t)
+;; 		  (pass? (iter (- a 1) (= (expmod a n n) a)))
+;; 		  (else #f)))
+;;   (iter (- n 1) #t))
+
+;; (carmichael-test 561)
+;; (carmichael-test 1105)
+;; (carmichael-test 1729)
