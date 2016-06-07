@@ -459,3 +459,82 @@
 ;; (carmichael-test 561)
 ;; (carmichael-test 1105)
 ;; (carmichael-test 1729)
+
+;;; 1.28
+;;; #TODO
+
+;;; Procedures as arguments
+
+;; (define (sum term a next b)
+;;   (if (> a b)
+;; 	  0
+;; 	  (+ (term a)
+;; 		 (sum term (next a) next b))))
+
+(define (cube x) (* x x x))
+
+(define (sum-cubes a b)
+  (sum cube a inc b))
+
+(define (sum-integers a b)
+  (sum (lambda(x) x) a inc b))
+
+(define (pi-sum a b)
+  (define (pi-term x)
+	(/ 1.0 (* x (+ x 2))))
+  (define (pi-next x)
+	(+ x 4))
+  (sum pi-term a pi-next b))
+
+(define (integral f a b dx)
+  (define (add-dx x)
+	(+ x dx))
+  (* (sum f (+ a (/ dx 2.0)) add-dx b)
+	 dx))
+
+;;; 1.29
+
+(define (better-intergral f a b n)
+  (let ((h (/ (- b a) n)))
+	(define (next k)
+	  (let ((yk (f (+ a (* k h)))))
+		(cond ((or (= k 0) (= k n)) yk)
+			  ((even? k) (* 2 yk))
+			  (else (* 4 yk)))))
+	(* (sum next 0 inc n)
+	   (/ h 3))))
+
+;;; The results is much more accurate than the old one.
+
+;;; 1.30
+
+(define (sum term a next b)
+  (define (iter a result)
+	(if (> a b)
+		result
+		(iter (next a) (+ result (term a)))))
+  (iter a 0))
+
+;;; 1.31
+
+(define (product term a next b)
+  (define (iter a result)
+	(if (> a b)
+		result
+		(iter (next a) (* result (term a)))))
+  (iter a 1))
+
+(define (rec-product term a next b)
+  (if (> a b)
+	  1
+	  (* (term a)
+		 (rec-product term (next a) next b))))
+
+(define (quarter-pi n)
+  (define (next x)
+	(if (even? x)
+		(/ (+ 2 x)
+		   (+ 3 x))
+		(/ (+ 2 (* 2 (+ (quotient x 2) 1)))
+		   (+ 3 (- x 1)))))
+  (product next 0.0 inc n))
