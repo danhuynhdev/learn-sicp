@@ -318,10 +318,10 @@
 ;;; test test-divisor from 2 to (sqrt n) till it devides b. If can't find divisor then
 ;;; return n.
 
-(define (find-divisor n test-divisor)
-  (cond ((> (square test-divisor) n) n)
-		((divides? test-divisor n) test-divisor)
-		(else (find-divisor n (+ test-divisor 1)))))
+;; (define (find-divisor n test-divisor)
+;;   (cond ((> (square test-divisor) n) n)
+;; 		((divides? test-divisor n) test-divisor)
+;; 		(else (find-divisor n (+ test-divisor 1)))))
 
 (define (divides? a b) (= (remainder b a) 0))
 
@@ -350,6 +350,8 @@
   (cond ((= times 0) #t)
 		((fermat-test n) (fast-prime? n (- times 1)))
 		(else #f)))
+<<<<<<< HEAD
+<<<<<<< HEAD
 
 ;;; 1.21
 
@@ -363,9 +365,9 @@
   (newline)
   (display n)
   (start-prime-test n (runtime)))
-(define (start-prime-test n start-time)
-  (if (prime? n)
-	  (report-prime (- (runtime) start-time))))
+;; (define (start-prime-test n start-time)
+;;   (if (prime? n)
+;; 	  (report-prime (- (runtime) start-time))))
 (define (report-prime elapsed-time)
   (display " *** ")
   (display elapsed-time))
@@ -390,6 +392,56 @@
 ;;; 100003 *** 42
 ;;; 100019 *** 36
 ;;; 100043 *** 35
+;;; (search-for-primes 1000000)
+;;; 1000003 *** 114
+;;; 1000033 *** 110
+;;; 1000037 *** 111
 
 ;;; I think the result is pretty ok. For example 1013 compute in 4 microseconds
 ;;; and 10009 compute in 12 microseconds exactly equal (* 4 (sqrt 10)).
+
+;;; 1.23
+
+(define (next x)
+  (if (= x 2)
+	  3
+	  (+ x 2)))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+		((divides? test-divisor n) test-divisor)
+		(else (find-divisor n (next test-divisor)))))
+
+;;; It is only faster for big number like 100000. Can't see any different with
+;;; number smaller than that.
+
+;;; 1.24
+
+(define (start-prime-test n start-time)
+  (if (fast-prime? n 10)
+	  (report-prime (- (runtime) start-time))))
+
+;;; (search-for-primes 1000)
+;;; 1009 *** 43
+;;; 1013 *** 25
+;;; 1019 *** 40
+;;; (search-for-primes 10000)
+;;; 10007 *** 35
+;;; 10009 *** 29
+;;; 10037 *** 29
+;;; (search-for-primes 100000)
+;;; 100003 *** 46
+;;; 100019 *** 41
+;;; 100043 *** 42
+;;; (search-for-primes 1000000)
+;;; 100003 *** 42
+;;; 100019 *** 34
+;;; 100043 *** 35
+
+;;; The time actually longer with small numbers but they grow much much slower
+;;; with bigger numbers with a massive different with 1000000.
+
+;;; 1.25
+;;; The result will stay the same but if we use her way it will take a lot longer
+;;; to compute because fast-expt will produce a very big number and doing math
+;;; stuff on big numbers is very expensive to the machines.
