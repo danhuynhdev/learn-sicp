@@ -538,3 +538,45 @@
 		(/ (+ 2 (* 2 (+ (quotient x 2) 1)))
 		   (+ 3 (- x 1)))))
   (product next 0.0 inc n))
+
+;;; 1.32
+
+(define (accumulate combiner null-value term a next b)
+  (define (iter a result)
+	(if (> a b)
+		result
+		(iter (next a) (combiner result (term a)))))
+  (iter a null-value))
+
+(define (rec-accumulate combiner null-value term a next b)
+  (if (> a b)
+	  null-value
+	  (combiner (term a)
+				(rec-accumulate combiner
+								null-value
+								term
+								(next a)
+								next
+								b))))
+
+;;; 1.33
+
+(define (filtered-accumulate combiner null-value term a next b filter)
+  (define (iter a result)
+	(if (> a b)
+		result
+		(iter (next a)
+			  (combiner result
+						(if (filter a)
+							(term a)
+							null-value)))))
+  (iter a null-value))
+
+(define (sum-prime a b)
+  (filtered-accumulate + 0 square a inc b prime?))
+
+(define (product-b n)
+  (define (filter i)
+	(and (< i n)
+		 (= (gcd i n) 1)))
+  (filtered-accumulate * 1 (lambda(a) a) 1 inc n filter))
