@@ -580,3 +580,82 @@
 	(and (< i n)
 		 (= (gcd i n) 1)))
   (filtered-accumulate * 1 (lambda(a) a) 1 inc n filter))
+
+;;; 1.34
+;;; It will say 2 is not a procedure
+;;; It will evaluate like this:
+;;; (f f) -> (f 2) -> (2 2)
+
+;;; Procedures as General methods
+
+(define (close-enough? x y) (< (abs (- x y)) 0.001))
+
+(define (search f neg-point pos-point)
+  (let ((midpoint (average neg-point pos-point)))
+	(if (close-enough? neg-point pos-point)
+		midpoint
+		(let ((test-value (f midpoint)))
+		  (cond ((positive? test-value)
+				 (search f neg-point midpoint))
+				((negative? test-value)
+				 (search f midpoint pos-point))
+				(else midpoint))))))
+
+(define (half-interval-method f a b)
+  (let ((a-value (f a))
+		(b-value (f b)))
+	(cond ((and (negative? a-value) (positive? b-value))
+		   (search f a b))
+		  ((and (negative? b-value) (positive? a-value))
+		   (search f b a))
+		  (else
+		   (error "Values are not of opposite sign" a b)))))
+
+;;; Finding fixed points of functions
+
+(define tolerance 0.00001)
+;; (define (fixed-point f first-guess)
+;;   (define (close-enough? v1 v2)
+;; 	(< (abs (- v1 v2))
+;; 	   tolerance))
+;;   (define (try guess)
+;; 	(let ((next (f guess)))
+;; 	  (if (close-enough? guess next)
+;; 		  next
+;; 		  (try next))))
+;;   (try first-guess))
+
+;; (define (sqrt x)
+;;   (fixed-point (lambda (y) (average y (/ x y)))
+;; 			   1.0))
+
+;;; 1.35
+
+(define (golden-ratio)
+  (fixed-point (lambda (x) (+ 1 (/ x)))
+			   1.0))
+
+;;; 1.36
+
+(define (fixed-point f first-guess)
+  (define (close-enough? v1 v2)
+	(< (abs (- v1 v2))
+	   tolerance))
+  (define (try guess)
+	(display guess) (newline)
+	(let ((next (f guess)))
+	  (if (close-enough? guess next)
+		  next
+		  (try next))))
+  (try first-guess))
+
+;;; This take 36 steps
+(define (sol-1.36)
+  (fixed-point (lambda (x) (/ (log 1000) (log x)))
+			   2.0))
+
+;;; This take 10 steps
+(define (sol-1.36-damped)
+  (fixed-point (lambda (x) (/ (+ x (/ (log 1000) (log x)))
+							  2))
+			   2.0))
