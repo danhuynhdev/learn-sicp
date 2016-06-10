@@ -659,3 +659,39 @@
   (fixed-point (lambda (x) (/ (+ x (/ (log 1000) (log x)))
 							  2))
 			   2.0))
+
+;;; 1.37
+
+(define (cont-frac n d k)
+  (define (iter i result)
+	(if (= i 0)
+		result
+		(iter (dec i) (/ (n i)
+						 (+ (d i) result)))))
+  (iter k 0))
+
+;;; k needs to be equal 11 to get an approximation that is accurate to 4 decimal places
+
+(define (rec-cont-frac n d k)
+  (define (iter i)
+	(if (> i k)
+		0
+		(/ (n i)
+		   (+ (d i) (iter (inc i))))))
+  (iter 1))
+
+;;; 1.38
+
+(define (e-2 k)
+  (cont-frac (lambda (i) 1.0)
+			 (lambda (i) (if (= (modulo (- i 2) 3) 0)
+							 (* 2 (/ (+ i 1) 3))
+							 1.0))
+			 k))
+
+;;; 1.39
+
+(define (tangent x k)
+  (cont-frac (lambda (i) (if (= i 1) x (- (square x))))
+			 (lambda (i) (- (* 2 i) 1))
+			 k))
