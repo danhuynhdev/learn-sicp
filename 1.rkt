@@ -42,8 +42,8 @@
 	  guess
 	  (sqrt-iter (improve guess x) x)))
 
-(define (sqrt x)
-  (sqrt-iter 1.0 x))
+;; (define (sqrt x)
+;;   (sqrt-iter 1.0 x))
 
 ;;; 1.6:
 ;;; Because lisp follow the aplicative-order
@@ -75,20 +75,20 @@
 ;; 	 (/ guess 1000000)))
 
 ;;; 1.8
-(define (cube-root x)
-  (define (improve guess)
-	(/ (+ (/ x (square guess))
-		  (* 2 guess))
-	   3))
-  (define (good-enough? guess)
-	(< (abs (- guess
-			   (improve guess)))
-	   (/ guess 1000000)))
-  (define (iter guess)
-	(if (good-enough? guess x)
-		guess
-		(iter (improve guess x) x)))
-  (iter 1.0))
+;; (define (cube-root x)
+;;   (define (improve guess)
+;; 	(/ (+ (/ x (square guess))
+;; 		  (* 2 guess))
+;; 	   3))
+;;   (define (good-enough? guess)
+;; 	(< (abs (- guess
+;; 			   (improve guess)))
+;; 	   (/ guess 1000000)))
+;;   (define (iter guess)
+;; 	(if (good-enough? guess x)
+;; 		guess
+;; 		(iter (improve guess x) x)))
+;;   (iter 1.0))
 
 ;;; 1.9
 
@@ -695,3 +695,57 @@
   (cont-frac (lambda (i) (if (= i 1) x (- (square x))))
 			 (lambda (i) (- (* 2 i) 1))
 			 k))
+
+;;; Procedures as returned values
+
+(define (average-damp f)
+  (lambda (x) (average x (f x))))
+
+;; (define (sqrt x)
+;;   (fixed-point (average-damp (lambda (y) (/ x y)))
+;; 			   1.0))
+
+(define (cube-root x)
+  (fixed-point (average-damp (lambda (y) (/ x (square y))))
+			   1.0))
+
+(define (deriv g)
+  (lambda (x) (/ (- (g (+ x dx)) (g x)) dx)))
+
+(define dx 0.00001)
+
+(define (newton-transform g)
+  (lambda (x) (- x (/ (g x) ((deriv g) x)))))
+
+(define (newtons-method g guess)
+  (fixed-point (newton-transform g) guess))
+
+;; (define (sqrt x)
+;;   (newtons-method
+;;    (lambda (y) (- (square y) x)) 1.0))
+
+(define (fixed-point-of-transform g transform guess)
+  (fixed-point (transform g) guess))
+
+;; (define (sqrt x)
+;;   (fixed-point-of-transform
+;;    (lambda (y) (/ x y)) average-damp 1.0))
+
+(define (sqrt x)
+  (fixed-point-of-transform
+   (lambda (y) (- (square y) x)) newton-transform 1.0))
+
+;;; 1.40
+
+(define (cubic a b c)
+  (lambda (x) (+ (cube x) (* a (square x)) (* b x) c)))
+
+;;; 1.41
+
+(define (double f)
+  (lambda (x) (f (f x))))
+
+;;; 1.42
+
+(define (compose f g)
+  (lambda (x) (f (g x))))
