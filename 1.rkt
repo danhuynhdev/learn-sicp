@@ -637,17 +637,17 @@
 
 ;;; 1.36
 
-(define (fixed-point f first-guess)
-  (define (close-enough? v1 v2)
-	(< (abs (- v1 v2))
-	   tolerance))
-  (define (try guess)
-	(display guess) (newline)
-	(let ((next (f guess)))
-	  (if (close-enough? guess next)
-		  next
-		  (try next))))
-  (try first-guess))
+;; (define (fixed-point f first-guess)
+;;   (define (close-enough? v1 v2)
+;; 	(< (abs (- v1 v2))
+;; 	   tolerance))
+;;   (define (try guess)
+;; 	(display guess) (newline)
+;; 	(let ((next (f guess)))
+;; 	  (if (close-enough? guess next)
+;; 		  next
+;; 		  (try next))))
+;;   (try first-guess))
 
 ;;; This take 36 steps
 (define (sol-1.36)
@@ -731,9 +731,9 @@
 ;;   (fixed-point-of-transform
 ;;    (lambda (y) (/ x y)) average-damp 1.0))
 
-(define (sqrt x)
-  (fixed-point-of-transform
-   (lambda (y) (- (square y) x)) newton-transform 1.0))
+;; (define (sqrt x)
+;;   (fixed-point-of-transform
+;;    (lambda (y) (- (square y) x)) newton-transform 1.0))
 
 ;;; 1.40
 
@@ -749,3 +749,152 @@
 
 (define (compose f g)
   (lambda (x) (f (g x))))
+
+;;; 1.43
+
+(define (repeat f n)
+  (lambda (x)
+	(define (iter i result)
+	  (if (= i n)
+		  result
+		  (iter (inc i) (f result))))
+	(iter 0 x)))
+
+;;; 1.44
+
+(define (smooth f)
+  (lambda (x) (/ (f (- x dx) (f x) (f (+ x dx)))
+				 3)))
+
+(define (n-fold f n)
+  ((repeat smooth n) f))
+
+;;; 1.45
+
+(define (nth-root x n)
+   (fixed-point
+	((repeat average-damp (- n 2)) (lambda (y) (/ x (expt y (- n 1)))))
+	1.0))
+
+;;; 1.46
+
+(define (iterative-improve good-enough? improve)
+  (lambda (guess)
+	(define (iter guess)
+	  (let ((next (improve guess)))
+		(if (good-enough? guess next)
+			next
+			(iter next))))
+	(iter guess)))
+
+(define (sqrt x)
+  ((iterative-improve close-enough? (average-damp (lambda (y) (/ x y)))) 1.0))
+
+(define (fixed-point f first-guess)
+  ((iterative-improve close-enough? f) first-guess))
+
+;;; Arithmetic Operations for Rational Numbers
+
+(define (add-rat x y)
+  (make-rat (+ (* (numer x) (denom y))
+			   (* (numer y) (denom x)))
+			(* (denom x) (denom y))))
+(define (sub-rat x y)
+  (make-rat (- (* (numer x) (denom y))
+			   (* (numer y) (denom x)))
+			(* (denom x) (denom y))))
+(define (mul-rat x y)
+  (make-rat (* (numer x) (numer y))
+			(* (denom x) (denom y))))
+(define (div-rat x y)
+  (make-rat (* (numer x) (denom y))
+			(* (denom x) (numer y))))
+(define (equal-rat? x y)
+  (= (* (numer x) (denom y))
+	 (* (numer y) (denom x))))
+
+;; (define (make-rat n d) (cons n d))
+(define (numer x) (car x))
+(define (denom x) (cdr x))
+
+(define (print-rat x)
+  (newline)
+  (display (numer x))
+  (display "/")
+  (display (denom x)))
+
+;;; 2.1
+
+(define (make-rat n d)
+  (let ((gc-div (gcd n d)))
+	(cons (/ n gc-div)
+		  (/ d gc-div))))
+
+(define one-half (make-rat 1 2))
+(define one-third (make-rat 1 3))
+
+;;; 2.2
+
+(define (print-point p)
+  (newline)
+  (display "(")
+  (display (x-point p))
+  (display ",")
+  (display (y-point p))
+  (display ")"))
+
+(define make-segment cons)
+(define start-segment car)
+(define end-segment cdr)
+
+(define make-point cons)
+(define x-point car)
+(define y-point cdr)
+
+(define (midpoint-segment seg)
+  (make-point (average (x-point (start-segment seg))
+					   (x-point (end-segment seg)))
+			  (average (y-point (start-segment seg))
+					   (y-point (end-segment seg)))))
+
+;;; 2.3
+
+(define (rec-perimeter rec)
+  (* (+ (rec-width rec)
+		(rec-height rec))
+	 2))
+
+(define (rec-area rec)
+  (* (rec-width rec)
+	 (rec-height rec)))
+
+;; (define (make-rec top-left top-right height)
+;;   (cons top-left (cons width height)))
+
+;; (define (rec-height rec) (cdr (cdr rec)))
+
+;; (define (rec-width rec) (car (cdr rec)))
+
+(define (make-rec top-left bottom-right)
+  (cons top-left bottom-right))
+
+(define (top-left rec) (car rec))
+
+(define (top-right rec)
+  (make-point (x-point (bottom-right rec))
+			  (y-point (top-left rec))))
+
+(define (bottom-left rec)
+  (make-point (x-point (top-left rec))
+			  (y-point (bottom-right rec))))
+
+(define (bottom-right rec)
+  (cdr rec))
+
+(define (rec-height rec)
+  (- (y-point (top-left rec))
+	 (y-point (bottom-left rec))))
+
+(define (rec-width rec)
+  (- (x-point (top-right rec))
+	 (x-point (top-left rec))))
