@@ -301,10 +301,10 @@
 
 ;;; GCD
 
-(define (gcd a b)
-  (if (= b 0)
-	  a
-	  (gcd b (remainder a b))))
+;; (define (gcd a b)
+;;   (if (= b 0)
+;; 	  a
+;; 	  (gcd b (remainder a b))))
 
 ;;; 1.20
 ;;; (gcd 206 40) 1 -> (gcd 40 6) 1 -> (gcd 6 4) 1 -> (gcd 4 2) 1 -> (gcd 2 0) -> 2
@@ -827,8 +827,11 @@
 
 (define (make-rat n d)
   (let ((gc-div (gcd n d)))
-	(cons (/ n gc-div)
-		  (/ d gc-div))))
+	(let ((n (/ n gc-div))
+		  (d (/ d gc-div)))
+	  (if (and (positive? n) (negative? d))
+		  (cons (- n) (- d))
+		  (cons n d)))))
 
 (define one-half (make-rat 1 2))
 (define one-third (make-rat 1 3))
@@ -898,3 +901,50 @@
 (define (rec-width rec)
   (- (x-point (top-right rec))
 	 (x-point (top-left rec))))
+
+;; (define (cons x y)
+;;   (define (dispatch m)
+;; 	(cond ((= m 0) x)
+;; 		  ((= m 1) y)
+;; 		  (else (error "Argument not 0 or 1: CONS" m))))
+;;   dispatch)
+;; (define (car z) (z 0))
+;; (define (cdr z) (z 1))
+
+;;; 2.4
+
+;; (define (cons x y)
+;;   (lambda (m) (m x y)))
+;; (define (car z)
+;;   (z (lambda (p q) p)))
+;; (define (cdr z)
+;;   (z (lambda (p q) q)))
+
+;;; 2.5
+
+(define (cons-i a b)
+  (* (expt 2 a) (expt 3 b)))
+(define (car-i p)
+  (define (iter p i)
+	(if (not (= (modulo p 2) 0))
+		i
+		(iter (/ p 2) (inc i))))
+  (iter p 0))
+(define (cdr-i p)
+  (define (iter p i)
+	(if (not (= (modulo p 3) 0))
+		i
+		(iter (/ p 3) (inc i))))
+  (iter p 0))
+
+;;; 2.6
+
+(define zero (lambda (f) (lambda (x) x)))
+(define (add-1 n)
+  (lambda (f) (lambda (x) (f ((n f) x)))))
+(define one (lambda (f) (lambda (x) (f x))))
+(define two (lambda (f) (lambda (x) (f (f x)))))
+(define (add a b)
+  (lambda (f)
+	(lambda (x)
+	  ((a f) ((b f) x)))))
