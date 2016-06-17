@@ -274,3 +274,70 @@
 		r
 		(iter (cons (car l) r) (cdr l))))
   (iter (cons (car list) nil) (cdr list)))
+
+;;; 2.19
+
+(define us-coins (list 50 25 10 5 1))
+(define uk-coins (list 100 50 20 10 5 2 1 0.5))
+
+(define (cc amount coin-values)
+  (cond ((= amount 0) 1)
+		((or (< amount 0) (no-more? coin-values)) 0)
+		(else
+		 (+ (cc amount
+				(except-first-denomination
+				 coin-values))
+			(cc (- amount
+				   (first-denomination
+					coin-values))
+				coin-values)))))
+
+(define no-more? null?)
+(define except-first-denomination cdr)
+(define first-denomination car)
+
+;;; The order with not affect the answer because it does not affect the combinations of coins
+
+;;; 2.20
+
+(define (same-parity f . ints)
+  (define (iter ints)
+	(cond ((null? ints) ints)
+		  (((if (even? f) even? odd?) (car ints)) (cons (car ints)
+														(iter (cdr ints))))
+		  (else (iter (cdr ints)))))
+  (cons f (iter ints)))
+
+;;; Mapping over lists
+
+(define (scale-list items factor)
+  (if (null? items)
+	  nil
+	  (cons (* (car items) factor)
+			(scale-list (cdr items)
+						factor))))
+
+(define (scale-list-map items factor)
+  (map (lambda (x) (* x factor))
+	   items))
+
+;;; 2.21
+
+(define square (lambda (x) (* x x)))
+(define (square-list items)
+  (if (null? items)
+	  nil
+	  (cons (square (car items)) (square-list (cdr items)))))
+(define (square-list-map items)
+  (map square items))
+
+;;; 2.22
+;;; Because we can only iterate from begin to start, but to construct the list we have to construct from the end.
+
+;;; 2.23
+
+;; (define (for-each proc items)
+;;   (if (not (null? items))
+;; 	  (begin
+;; 		(proc (car items))
+;; 		(for-each proc (cdr items)))))
