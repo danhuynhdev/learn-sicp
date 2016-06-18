@@ -341,3 +341,45 @@
 ;; 	  (begin
 ;; 		(proc (car items))
 ;; 		(for-each proc (cdr items)))))
+
+(define (count-leaves x)
+  (cond ((null? x) 0)
+		((not (pair? x)) 1)
+		(else (+ (count-leaves (car x))
+				 (count-leaves (cdr x))))))
+
+;;; 2.24
+;;; *
+;;; **
+;;; | \
+;;; 1  *
+;;;   / \
+;;;  2   *
+;;;     / \
+;;;    3   4
+
+;;; 2.25
+;;; (car (cdr (car (cdr (cdr pair)))))
+;;; (car (car pair))
+;;; (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr pair))))))))))))
+
+;;; 2.26
+;;; (cons 1 (cons 2 (cons 3 (cons 4 (cons 5 (cons 6 nil))))))
+;;; (cons (con 1 (cons 2 (cons 3 nil))) (cons 4 (cons 5 (cons 6 nil))))
+;;; (cons (cons 1 (cons 2 (cons 3 nil))) (cons (cons 4 (cons 5 (cons 6 nil))) nil))
+
+;;; 2.27
+
+(define (deep-reverse list)
+  (define (iter r l)
+	(cond ((null? l) r)
+		  ((not (pair? (car l))) (iter (cons (car l) r) (cdr l)))
+		  (else (iter (cons (iter '() (car l)) r) (cdr l)))))
+  (iter '() list))
+
+;;; 2.28
+
+(define (fringe x)
+  (cond ((null? x) nil)
+		((not (pair? (car x))) (cons (car x) (fringe (cdr x))))
+		(else (append (fringe (car x)) (fringe (cdr x))))))
