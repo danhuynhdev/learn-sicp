@@ -383,3 +383,118 @@
   (cond ((null? x) nil)
 		((not (pair? (car x))) (cons (car x) (fringe (cdr x))))
 		(else (append (fringe (car x)) (fringe (cdr x))))))
+
+;;; 2.29
+
+;; (define (make-mobile left right)
+;;   (list left right))
+
+;; (define (make-branch length structure)
+;;   (list length structure))
+(define (make-mobile left right) (cons left right))
+(define (make-branch length structure)
+  (cons length structure))
+
+(define (left-branch mobile)
+  (car mobile))
+
+;; (define (right-branch mobile)
+;;   (car (cdr mobile)))
+(define (right-branch mobile)
+  (cdr mobile))
+
+(define (mobile? mobile)
+  (and (pair? mobile)
+	   (branch? (left-branch mobile))
+	   (branch? (right-branch mobile))))
+
+(define (branch-length branch)
+  (car branch))
+
+;; (define (branch-structure branch)
+;;   (car (cdr branch)))
+(define (branch-structure branch)
+  (cdr branch))
+
+(define (branch? branch)
+  (and (pair? branch)
+	   (number? (branch-length branch))))
+
+(define (total-weight mobile)
+  (define (iter weight tree)
+	(cond ((null? tree) weight)
+		  ((mobile? tree) (iter (+ weight
+								   (iter 0 (left-branch tree))
+								   (iter 0 (right-branch tree))) nil))
+		  (else (let ((struct (branch-structure tree)))
+				  (if (number? struct)
+					  (iter (+ weight struct) nil)
+					  (iter weight struct))))))
+  (iter 0 mobile))
+
+(define x (make-mobile (make-branch 3
+									(make-mobile (make-branch 6 3)
+												 (make-branch 2 9)))
+					   (make-branch 3
+									(make-mobile (make-branch 2 9)
+												 (make-branch 6 3)))))
+
+(define (balance? mobile)
+  (define (branch-weight branch)
+	(let ((struct (branch-structure branch)))
+	  (if (number? struct)
+		  struct
+		  (total-weight struct))))
+  (define (branch-balance? branch)
+	(let ((struct (branch-structure branch)))
+	  (if (number? struct)
+		  true
+		  (balance? struct))))
+  (let ((left (left-branch mobile))
+		(right (right-branch mobile)))
+	(and (= (* (branch-length left) (branch-weight left))
+			(* (branch-length right) (branch-weight right)))
+		 (branch-balance? left)
+		 (branch-balance? right))))
+
+;;; d. We only need to change two selectors
+
+;;; Mapping over trees
+(define (scale-tree tree factor)
+  (cond ((null? tree) nil)
+		((not (pair? tree)) (* tree factor))
+		(else (cons (scale-tree (car tree) factor)
+					(scale-tree (cdr tree) factor)))))
+
+;; (define (scale-tree tree factor)
+;;   (map (lambda (sub-tree)
+;; 		 (if (pair? sub-tree)
+;; 			 (scale-tree sub-tree factor)
+;; 			 (* sub-tree factor)))
+;; 	   tree))
+
+;;; 2.30
+
+;; (define (square-tree tree)
+;;   (cond ((null? tree) nil)
+;; 		((not (pair? tree)) (square tree))
+;; 		(else (cons (square-tree (car tree))
+;; 					(square-tree (cdr tree))))))
+
+;; (define (square-tree tree)
+;;   (map (lambda (sub-tree)
+;; 		 (if (pair? sub-tree)
+;; 			 (square-tree sub-tree)
+;; 			 (square sub-tree)))
+;; 	   tree))
+
+;;; 2.31
+
+(define (tree-map proc tree)
+  (map (lambda (sub-tree)
+		 (if (pair? sub-tree)
+			 (tree-map proc sub-tree)
+			 (proc sub-tree)))
+	   tree))
+
+(define (square-tree tree) (tree-map square tree))
