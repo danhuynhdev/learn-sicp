@@ -2,6 +2,13 @@
 
 (define (average x y)
   (/ (+ x y) 2))
+
+(define (fib n)
+  (fib-iter 1 0 n))
+(define (fib-iter a b count)
+  (if (= count 0)
+	  b
+	  (fib-iter (+ a b) a (dec count))))
 ;;; Arithmetic Operations for Rational Numbers
 
 (define (add-rat x y)
@@ -342,11 +349,11 @@
 ;; 		(proc (car items))
 ;; 		(for-each proc (cdr items)))))
 
-(define (count-leaves x)
-  (cond ((null? x) 0)
-		((not (pair? x)) 1)
-		(else (+ (count-leaves (car x))
-				 (count-leaves (cdr x))))))
+;; (define (count-leaves x)
+;;   (cond ((null? x) 0)
+;; 		((not (pair? x)) 1)
+;; 		(else (+ (count-leaves (car x))
+;; 				 (count-leaves (cdr x))))))
 
 ;;; 2.24
 ;;; *
@@ -432,12 +439,12 @@
 					  (iter weight struct))))))
   (iter 0 mobile))
 
-(define x (make-mobile (make-branch 3
-									(make-mobile (make-branch 6 3)
-												 (make-branch 2 9)))
-					   (make-branch 3
-									(make-mobile (make-branch 2 9)
-												 (make-branch 6 3)))))
+;; (define x (make-mobile (make-branch 3
+;; 									(make-mobile (make-branch 6 3)
+;; 												 (make-branch 2 9)))
+;; 					   (make-branch 3
+;; 									(make-mobile (make-branch 2 9)
+;; 												 (make-branch 6 3)))))
 
 (define (balance? mobile)
   (define (branch-weight branch)
@@ -498,3 +505,114 @@
 	   tree))
 
 (define (square-tree tree) (tree-map square tree))
+
+;;; 2.32
+
+(define (subsets s)
+  (if (null? s)
+	  (list nil)
+	  (let ((rest (subsets (cdr s))))
+		(append rest (map
+					  (lambda (x) (cons (car s) x))
+					  rest)))))
+
+;;; Sequences as Conventional Interfaces
+
+;; (define (sum-odd-squares tree)
+;;   (cond ((null? tree) 0)
+;; 		((not (pair? tree))
+;; 		 (if (odd? tree) (square tree) 0))
+;; 		(else (+ (sum-odd-squares (car tree))
+;; 				 (sum-odd-squares (cdr tree))))))
+
+;; (define (even-fibs n)
+;;   (define (next k)
+;; 	(if (> k n)
+;; 		nil
+;; 		(let ((f (fib k)))
+;; 		  (if (even? f)
+;; 			  (cons f (next (+ k 1)))
+;; 			  (next (+ k 1))))))
+;;   (next 0))
+
+;;; Sequence Operations
+
+(define (filter predicate sequence)
+  (cond ((null? sequence) nil)
+		((predicate (car sequence))
+		 (cons (car sequence)
+			   (filter predicate (cdr sequence))))
+		(else (filter predicate (cdr sequence)))))
+
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+	  initial
+	  (op (car sequence)
+		  (accumulate op initial (cdr sequence)))))
+
+(define (enumerate-interval low high)
+  (if (> low high)
+	  nil
+	  (cons low (enumerate-interval (+ low 1) high))))
+
+(define (enumerate-tree tree)
+  (cond ((null? tree) nil)
+		((not (pair? tree)) (list tree))
+		(else (append (enumerate-tree (car tree))
+					  (enumerate-tree (cdr tree))))))
+
+(define (sum-odd-squares tree)
+  (accumulate
+   + 0 (map square (filter odd? (enumerate-tree tree)))))
+
+(define (even-fibs n)
+  (accumulate
+   cons
+   nil
+   (filter even? (map fib (enumerate-interval 0 n)))))
+
+(define (list-fib-squares n)
+  (accumulate
+   cons
+   nil
+   (map square (map fib (enumerate-interval 0 n)))))
+
+(define (product-of-squares-of-odd-elements sequence)
+  (accumulate * 1 (map square (filter odd? sequence))))
+
+;; (define (salary-of-highest-paid-programmer records)
+;;   (accumulate max 0 (map salary (filter programmer? records))))
+
+;;; 2.33
+
+(define (map p sequence)
+  (accumulate (lambda (x y)
+				(cons (p x) y) ) nil sequence))
+(define (append seq1 seq2)
+  (accumulate cons
+			  seq2 seq1))
+(define (length sequence)
+  (accumulate
+   (lambda (x y) (inc y)) 0 sequence))
+
+;;; 2.34
+
+(define (horner-eval x coefficient-sequence)
+  (accumulate (lambda (this-coeff higher-terms) (+ (* higher-terms x)
+												   this-coeff))
+			  0
+			  coefficient-sequence))
+
+;;; 2.35
+
+(define (count-leaves t)
+  (accumulate + 0 (map (lambda (x) 1)
+					   (enumerate-tree t))))
+
+;;; 2.36
+
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+	  nil
+	  (cons (accumulate op init (map (lambda (seq) (car seq)) seqs))
+			(accumulate-n op init (map (lambda (seq) (cdr seq)) seqs)))))
