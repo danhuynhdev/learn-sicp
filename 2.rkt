@@ -9,6 +9,22 @@
   (if (= count 0)
 	  b
 	  (fib-iter (+ a b) a (dec count))))
+
+(define (find-divisor n test-divisor)
+  (define (next x)
+	(if (= x 2)
+		3
+		(+ x 2)))
+  (cond ((> (square test-divisor) n) n)
+		((divides? test-divisor n) test-divisor)
+		(else (find-divisor n (next test-divisor)))))
+
+(define (smallest-divisor n) (find-divisor n 2))
+
+(define (divides? a b) (= (remainder b a) 0))
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
 ;;; Arithmetic Operations for Rational Numbers
 
 (define (add-rat x y)
@@ -585,9 +601,9 @@
 
 ;;; 2.33
 
-(define (map p sequence)
-  (accumulate (lambda (x y)
-				(cons (p x) y) ) nil sequence))
+;; (define (map p sequence)
+;;   (accumulate (lambda (x y)
+;; 				(cons (p x) y) ) nil sequence))
 (define (append seq1 seq2)
   (accumulate cons
 			  seq2 seq1))
@@ -616,3 +632,95 @@
 	  nil
 	  (cons (accumulate op init (map (lambda (seq) (car seq)) seqs))
 			(accumulate-n op init (map (lambda (seq) (cdr seq)) seqs)))))
+
+;;; 2.37
+
+(define (dot-product v w)
+  (accumulate + 0 (map * v w)))
+(define (matrix-*-vector m v)
+  (map (lambda (row) (dot-product row v)) m))
+(define (transpose mat)
+  (accumulate-n cons nil mat))
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+	(map (lambda (row) (matrix-*-vector cols row)) m)))
+
+;;; 2.38
+
+(define (fold-left op initial sequence)
+  (define (iter result rest)
+	(if (null? rest)
+		result
+		(iter (op result (car rest))
+			  (cdr rest))))
+  (iter initial sequence))
+
+;; (fold-right / 1 (list 1 2 3)) -> 3/2
+;; (fold-left / 1 (list 1 2 3)) -> 1/6
+;; (fold-right list nil (list 1 2 3)) -> '(1 (2 (3 nil)))
+;; (fold-left list nil (list 1 2 3)) -> '(((nil 1) 2) 3)
+
+;;; op must be produce the same result no matter the order of its args to guarantee
+;;; that fold-right and fold-left will produce the same values for any sequence
+
+;;; 2.39
+
+;; (define (reverse sequence)
+;;   (fold-right (lambda (x y) (append y (list x))) nil sequence))
+;; (define (reverse sequence)
+;;   (fold-left (lambda (x y) (cons y x)) nil sequence))
+
+;;; Nested Mappings
+
+;; (accumulate
+;;  append nil (map (lambda (i)
+;; 				   (map (lambda (j) (list i j))
+;; 						(enumerate-interval 1 (- i 1))))
+;; 				 (enumerate-interval 1 n)))
+
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+(define (prime-sum? pair)
+  (prime? (+ (car pair) (cadr pair))))
+
+(define (make-pair-sum pair)
+  (list (car pair) (cadr pair) (+ (car pair) (cadr pair))))
+
+;; (define (prime-sum-pairs n)
+;;   (map make-pair-sum
+;; 	   (filter prime-sum? (flatmap
+;; 						   (lambda (i)
+;; 							 (map (lambda (j) (list i j))
+;; 								  (enumerate-interval 1 (- i 1))))
+;; 						   (enumerate-interval 1 n)))))
+
+(define (remove item sequence)
+  (filter (lambda (x) (not (= x item)))
+		  sequence))
+
+;;; 2.40
+
+(define (unique-pairs n)
+  (flatmap (lambda (i)
+			 (map (lambda (j) (list i j))
+				  (enumerate-interval 1 (- i 1))))
+			 (enumerate-interval 1 n)))
+
+(define (prime-sum-pairs n)
+  (map make-pair-sum
+	   (filter prime-sum? (unique-pairs n))))
+
+;;; 2.41
+
+(define (unique-triplets n)
+  (flatmap (lambda (i)
+			 (flatmap (lambda (j)
+						(map (lambda (k) (list i j k))
+							 (enumerate-interval 1 (- j 1))))
+				  (enumerate-interval 1 (- i 1))))
+		   (enumerate-interval 1 n)))
+
+(define (sum-triplets n s)
+  (filter (lambda (t) (= s (+ (car t) (cadr t) (caddr t))))
+		  (unique-triplets n)))
