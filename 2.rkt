@@ -724,3 +724,148 @@
 (define (sum-triplets n s)
   (filter (lambda (t) (= s (+ (car t) (cadr t) (caddr t))))
 		  (unique-triplets n)))
+
+;;; 2.42
+
+(define (queens board-size)
+  (define empty-board nil)
+  (define (adjoin-position new-row k rest-of-queens)
+	(cons (list k new-row) rest-of-queens))
+  (define (safe? ck positions)
+  	(let ((rk (cadr (car positions))))
+  	  (accumulate (lambda (ith s?)
+  					(let ((ci (car ith))
+  						  (ri (cadr ith)))
+  					  (and s?
+						   (not (= ri rk))
+						   (not (= (- ck ci)
+								   (abs (- rk ri)))))))
+  				  true
+  				  (cdr positions))))
+  (define (queen-cols k)
+	(if (= k 0)
+		(list empty-board)
+		(filter
+		 (lambda (positions) (safe? k positions))
+		 (flatmap
+		  (lambda (rest-of-queens)
+			(map (lambda (new-row)
+				   (adjoin-position
+					new-row k rest-of-queens))
+				 (enumerate-interval 1 board-size)))
+		  (queen-cols (- k 1))))))
+  (queen-cols board-size))
+
+;;; 2.43
+;;; It will run suuuuuuuuuuuper slow because it will re-compute (queens-cols)
+;;; each time it enumerate through the list.
+;;; So if 2.42 run with T time, 2.43 will run with (* T (fatorial board-size))
+
+;;; A Picture Language
+
+;; (define (flipped-pairs painter)
+;;   (let ((painter2 (beside painter (flip-vert painter))))
+;; 	(below painter2 painter2)))
+
+;; (define (right-split painter n)
+;;    (if (= n 0)
+;; 	   painter
+;; 	   (let ((smaller (right-split painter (- n 1))))
+;; 		 (beside painter (below smaller smaller)))))
+
+(define (corner-split painter n)
+  (if (= n 0)
+	  painter
+	  (let ((up (up-split painter (- n 1)))
+			(right (right-split painter (- n 1))))
+		(let ((top-left (beside up up))
+			  (bottom-right (below right right))
+			  (corner (corner-split painter (- n 1))))
+		  (beside (below painter top-left)
+				  (below bottom-right corner))))))
+
+;; (define (square-limit painter n)
+;;   (let ((quarter (corner-split painter n)))
+;; 	(let ((half (beside (flip-horiz quarter) quarter)))
+;; 	  (below (flip-vert half) half))))
+
+;;; 2.44
+
+;; (define (up-split painter n)
+;;   (if (= n 0)
+;; 	  painter
+;; 	  (let ((smaller (up-split painter (- n 1))))
+;; 		(below painter (beside smaller smaller)))))
+
+
+(define (square-of-four tl tr bl br)
+  (lambda (painter)
+	(let ((top (beside (tl painter) (tr painter)))
+		  (bottom (beside (bl painter) (br painter))))
+	  (below bottom top))))
+
+(define (flipped-pairs painter)
+  (let ((combine4 (square-of-four identity flip-vert
+								  identity flip-vert)))
+	(combine4 painter)))
+
+(define (square-limit painter n)
+  (let ((combine4 (square-of-four flip-horiz identity
+								  rotate180 flip-vert)))
+	(combine4 (corner-split painter n))))
+
+;;; 2.45
+
+(define (split sb sm)
+  (define (iter painter n)
+	(if (= n 0)
+		painter
+		(let ((smaller (iter painter (- n 1))))
+		  (sb painter (sm smaller smaller)))))
+  iter)
+
+(define right-split (split beside below))
+(define up-split (split below beside))
+
+;;; Frames
+
+(define (frame-coord-map frame)
+  (lambda (v)
+	(add-vect
+	 (origin-frame frame)
+	 (add-vect (scale-vect (xcor-vect v) (edge1-frame frame))
+			   (scale-vect (ycor-vect v) (edge2-frame frame))))))
+
+;;; 2.46
+
+(define make-vect cons)
+(define xcor-vect car)
+(define ycor-vect cdr)
+
+(define (add-vect v1 v2)
+  (make-vect (+ (xcor-vect v1) (xcor-vect v2))
+			 (+ (ycor-vect v2) (ycor-vect v2))))
+
+(define (sub-vect v1 v2)
+  (add-vect v1 (make-vect (- (xcor-vect v2))
+						  (- (ycor-vect v2)))))
+
+(define (scale-vect s v)
+  (make-vect (* s (xcor-vect v))
+			 (* s (ycor-vect v))))
+
+;;; 2.47
+
+(define (make-frame origin edge1 edge2)
+  (list origin edge1 edge2))
+
+(define origin-frame car)
+(define edge1-frame cadr)
+(define edge2-frame caddr)
+
+;; (define (make-frame origin edge1 edge2)
+;;   (cons origin (cons edge1 edge2)))
+
+;; (define origin-frame car)
+;; (define (edge1-frame f) (car (car f)))
+;; (define (edge2-frame f) (car (cdr f)))
