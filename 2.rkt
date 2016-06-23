@@ -1,4 +1,5 @@
-#lang planet neil/sicp
+#lang sicp
+(#%require sicp-pict)
 
 (define (average x y)
   (/ (+ x y) 2))
@@ -70,38 +71,38 @@
 
 ;;; 2.2
 
-(define (print-point p)
-  (newline)
-  (display "(")
-  (display (x-point p))
-  (display ",")
-  (display (y-point p))
-  (display ")"))
+;; (define (print-point p)
+;;   (newline)
+;;   (display "(")
+;;   (display (x-point p))
+;;   (display ",")
+;;   (display (y-point p))
+;;   (display ")"))
 
-(define make-segment cons)
-(define start-segment car)
-(define end-segment cdr)
+;; (define make-segment cons)
+;; (define start-segment car)
+;; (define end-segment cdr)
 
-(define make-point cons)
-(define x-point car)
-(define y-point cdr)
+;; (define make-point cons)
+;; (define x-point car)
+;; (define y-point cdr)
 
-(define (midpoint-segment seg)
-  (make-point (average (x-point (start-segment seg))
-					   (x-point (end-segment seg)))
-			  (average (y-point (start-segment seg))
-					   (y-point (end-segment seg)))))
+;; (define (midpoint-segment seg)
+;;   (make-point (average (x-point (start-segment seg))
+;; 					   (x-point (end-segment seg)))
+;; 			  (average (y-point (start-segment seg))
+;; 					   (y-point (end-segment seg)))))
 
 ;;; 2.3
 
-(define (rec-perimeter rec)
-  (* (+ (rec-width rec)
-		(rec-height rec))
-	 2))
+;; (define (rec-perimeter rec)
+;;   (* (+ (rec-width rec)
+;; 		(rec-height rec))
+;; 	 2))
 
-(define (rec-area rec)
-  (* (rec-width rec)
-	 (rec-height rec)))
+;; (define (rec-area rec)
+;;   (* (rec-width rec)
+;; 	 (rec-height rec)))
 
 ;; (define (make-rec top-left top-right height)
 ;;   (cons top-left (cons width height)))
@@ -110,29 +111,29 @@
 
 ;; (define (rec-width rec) (car (cdr rec)))
 
-(define (make-rec top-left bottom-right)
-  (cons top-left bottom-right))
+;; (define (make-rec top-left bottom-right)
+;;   (cons top-left bottom-right))
 
-(define (top-left rec) (car rec))
+;; (define (top-left rec) (car rec))
 
-(define (top-right rec)
-  (make-point (x-point (bottom-right rec))
-			  (y-point (top-left rec))))
+;; (define (top-right rec)
+;;   (make-point (x-point (bottom-right rec))
+;; 			  (y-point (top-left rec))))
 
-(define (bottom-left rec)
-  (make-point (x-point (top-left rec))
-			  (y-point (bottom-right rec))))
+;; (define (bottom-left rec)
+;;   (make-point (x-point (top-left rec))
+;; 			  (y-point (bottom-right rec))))
 
-(define (bottom-right rec)
-  (cdr rec))
+;; (define (bottom-right rec)
+;;   (cdr rec))
 
-(define (rec-height rec)
-  (- (y-point (top-left rec))
-	 (y-point (bottom-left rec))))
+;; (define (rec-height rec)
+;;   (- (y-point (top-left rec))
+;; 	 (y-point (bottom-left rec))))
 
-(define (rec-width rec)
-  (- (x-point (top-right rec))
-	 (x-point (top-left rec))))
+;; (define (rec-width rec)
+;;   (- (x-point (top-right rec))
+;; 	 (x-point (top-left rec))))
 
 ;; (define (cons x y)
 ;;   (define (dispatch m)
@@ -236,7 +237,7 @@
 
 (define (div-interval x y)
   (if (<= (* (upper-bound y) (lower-bound y)) 0)
-	  (error "Divide by an interval that spans zero")
+	  (display "Divide by an interval that spans zero")
 	  (mul-interval
 	   x
 	   (make-interval (/ 1.0 (upper-bound y))
@@ -827,45 +828,356 @@
 (define right-split (split beside below))
 (define up-split (split below beside))
 
-;;; Frames
-
-(define (frame-coord-map frame)
-  (lambda (v)
-	(add-vect
-	 (origin-frame frame)
-	 (add-vect (scale-vect (xcor-vect v) (edge1-frame frame))
-			   (scale-vect (ycor-vect v) (edge2-frame frame))))))
-
 ;;; 2.46
 
-(define make-vect cons)
-(define xcor-vect car)
-(define ycor-vect cdr)
+;; (define make-vect cons)
+;; (define xcor-vect car)
+;; (define ycor-vect cdr)
 
-(define (add-vect v1 v2)
-  (make-vect (+ (xcor-vect v1) (xcor-vect v2))
-			 (+ (ycor-vect v2) (ycor-vect v2))))
+;; (define (vector-add v1 v2)
+;;   (make-vect (+ (xcor-vect v1) (xcor-vect v2))
+;; 			 (+ (ycor-vect v2) (ycor-vect v2))))
 
-(define (sub-vect v1 v2)
-  (add-vect v1 (make-vect (- (xcor-vect v2))
-						  (- (ycor-vect v2)))))
+;; (define (vector-sub v1 v2)
+;;   (vector-add v1 (make-vect (- (xcor-vect v2))
+;; 						  (- (ycor-vect v2)))))
 
-(define (scale-vect s v)
-  (make-vect (* s (xcor-vect v))
-			 (* s (ycor-vect v))))
+;; (define (vector-scale s v)
+;;   (make-vect (* s (xcor-vect v))
+;; 			 (* s (ycor-vect v))))
 
 ;;; 2.47
 
-(define (make-frame origin edge1 edge2)
-  (list origin edge1 edge2))
+;; (define (make-frame origin edge1 edge2)
+;;   (list origin edge1 edge2))
 
-(define origin-frame car)
-(define edge1-frame cadr)
-(define edge2-frame caddr)
+;; (define origin-frame car)
+;; (define edge1-frame cadr)
+;; (define edge2-frame caddr)
 
 ;; (define (make-frame origin edge1 edge2)
 ;;   (cons origin (cons edge1 edge2)))
 
-;; (define origin-frame car)
-;; (define (edge1-frame f) (car (car f)))
-;; (define (edge2-frame f) (car (cdr f)))
+;; (define frame-origin car)
+;; (define (frame-edge1 f) (car (car f)))
+;; (define (frame-edge2 f) (car (cdr f)))
+
+;;; Frames
+
+(define (frame-coord-map frame)
+  (lambda (v)
+	(vector-add
+	 (frame-origin frame)
+	 (vector-add (vector-scale (vector-xcor v) (frame-edge1 frame))
+				 (vector-scale (vector-ycor v) (frame-edge2 frame))))))
+
+;;; Painters
+
+;; (define (segments->painter segment-list)
+;;   (lambda (frame)
+;; 	(for-each
+;; 	 (lambda (segment)
+;; 	   (draw-line
+;; 		((frame-coord-map frame)
+;; 		 (start-segment segment))
+;; 		((frame-coord-map frame)
+;; 		 (end-segment segment))))
+;; 	 segment-list)))
+
+;;; 2.48
+
+(define (make-segment start end) (cons start end))
+(define segment-start car)
+(define segment-end cdr)
+
+;;; 2.49
+
+(define outline-segments
+  (list (make-segment (make-vect 0 0)
+					  (make-vect 0 1))
+		(make-segment (make-vect 0 0)
+					  (make-vect 1 0))
+		(make-segment (make-vect 0 1)
+					  (make-vect 1 1))
+		(make-segment (make-vect 1 0)
+					  (make-vect 1 1))))
+
+(define outline (segments->painter outline-segments))
+
+(define x-segments
+  (list (make-segment (make-vect 0 1)
+					  (make-vect 1 0))
+		(make-segment (make-vect 0 0)
+					  (make-vect 1 1))))
+
+(define x-painter (segments->painter x-segments))
+
+(define diamond-segments
+   (list (make-segment (make-vect 0 0.5)
+					   (make-vect 0.5 1))
+		 (make-segment (make-vect 0.5 1)
+					   (make-vect 1 0.5))
+		 (make-segment (make-vect 1 0.5)
+					   (make-vect 0.5 0))
+		 (make-segment (make-vect 0.5 0)
+					   (make-vect 0 0.5))))
+
+(define diamond (segments->painter diamond-segments))
+
+;;; Sameless copy :p. I'm bad at figuring out cordinates
+(define wave-segments
+ (list
+  (make-segment
+   (make-vect 0.006 0.840)
+   (make-vect 0.155 0.591))
+  (make-segment
+   (make-vect 0.006 0.635)
+   (make-vect 0.155 0.392))
+  (make-segment
+   (make-vect 0.304 0.646)
+   (make-vect 0.155 0.591))
+  (make-segment
+   (make-vect 0.298 0.591)
+   (make-vect 0.155 0.392))
+  (make-segment
+   (make-vect 0.304 0.646)
+   (make-vect 0.403 0.646))
+  (make-segment
+   (make-vect 0.298 0.591)
+   (make-vect 0.354 0.492))
+  (make-segment
+   (make-vect 0.403 0.646)
+   (make-vect 0.348 0.845))
+  (make-segment
+   (make-vect 0.354 0.492)
+   (make-vect 0.249 0.000))
+  (make-segment
+   (make-vect 0.403 0.000)
+   (make-vect 0.502 0.293))
+  (make-segment
+   (make-vect 0.502 0.293)
+   (make-vect 0.602 0.000))
+  (make-segment
+   (make-vect 0.348 0.845)
+   (make-vect 0.403 0.999))
+  (make-segment
+   (make-vect 0.602 0.999)
+   (make-vect 0.652 0.845))
+  (make-segment
+   (make-vect 0.652 0.845)
+   (make-vect 0.602 0.646))
+  (make-segment
+   (make-vect 0.602 0.646)
+   (make-vect 0.751 0.646))
+  (make-segment
+   (make-vect 0.751 0.646)
+   (make-vect 0.999 0.343))
+  (make-segment
+   (make-vect 0.751 0.000)
+   (make-vect 0.597 0.442))
+  (make-segment
+   (make-vect 0.597 0.442)
+   (make-vect 0.999 0.144))))
+
+(define wave (segments->painter wave-segments))
+
+;;; I'm bored so here is my name in picture language :)
+(define myname-segments
+  (list (make-segment (make-vect 1/16 2/8)
+					  (make-vect 1/16 6/8))
+		(make-segment (make-vect 2/8 3/8)
+					  (make-vect 2/8 5/8))
+		(make-segment (make-vect 1/16 2/8)
+					  (make-vect 2/8 3/8))
+		(make-segment (make-vect 1/16 6/8)
+					  (make-vect 2/8 5/8))
+		(make-segment (make-vect 5/16 2/8)
+					  (make-vect 1/2 6/8))
+		(make-segment (make-vect 1/2 6/8)
+					  (make-vect 11/16 2/8))
+		(make-segment (make-vect 13/32 1/2)
+					  (make-vect 19/32 1/2))
+		(make-segment (make-vect 23/32 2/8)
+					  (make-vect 23/32 6/8))
+		(make-segment (make-vect 31/32 2/8)
+					  (make-vect 31/32 6/8))
+		(make-segment (make-vect 23/32 6/8)
+					  (make-vect 31/32 2/8))))
+
+(define myname (segments->painter myname-segments))
+
+;;; Transforming and combining painters
+
+(define (transform-painter painter origin corner1 corner2)
+  (lambda (frame)
+	(let ((m (frame-coord-map frame)))
+	  (let ((new-origin (m origin)))
+		(painter (make-frame
+				  new-origin
+				  (vector-sub (m corner1) new-origin)
+				  (vector-sub (m corner2) new-origin)))))))
+(define (flip-vert painter)
+  (transform-painter painter
+					 (make-vect 0.0 1.0)
+					 (make-vect 1.0 1.0)
+					 (make-vect 0.0 0.0)))
+
+(define (shrink-to-upper-right painter)
+  (transform-painter
+   painter (make-vect 0.5 0.5)
+   (make-vect 1.0 0.5) (make-vect 0.5 1.0)))
+(define (rotate90 painter)
+  (transform-painter painter
+					 (make-vect 1.0 0.0)
+					 (make-vect 1.0 1.0)
+					 (make-vect 0.0 0.0)))
+(define (squash-inwards painter)
+  (transform-painter painter
+					 (make-vect 0.0 0.0)
+					 (make-vect 0.65 0.35)
+					 (make-vect 0.35 0.65)))
+
+(define (beside-painter painter1 painter2)
+  (let ((split-point (make-vect 0.5 0.0)))
+	(let ((paint-left
+		   (transform-painter
+			painter1
+			(make-vect 0.0 0.0)
+			split-point
+			(make-vect 0.0 1.0)))
+		  (paint-right
+		   (transform-painter
+			painter2
+			split-point
+			(make-vect 1.0 0.0)
+			(make-vect 0.5 1.0))))
+	  (lambda (frame)
+		(paint-left frame)
+		(paint-right frame)))))
+
+;;; 2.50
+
+(define (flip-horiz painter)
+  (transform-painter painter
+					 (make-vect 1.0 0.0)
+					 (make-vect 0.0 0.0)
+					 (make-vect 1.0 1.0)))
+
+;;; 2.51
+
+;; (define (below-painter painter1 painter2)
+;;   (let ((split-point (make-vect 0.0 0.5)))
+;; 	(let ((paint-up
+;; 		   (transform-painter
+;; 			painter1
+;; 			(make-vect 0.0 0.0)
+;; 			(make-vect 1.0 0.0)
+;; 			split-point))
+;; 		  (paint-down
+;; 		   (transform-painter
+;; 			painter2
+;; 			split-point
+;; 			(make-vect 1.0 0.5)
+;; 			(make-vect 0.0 1.0))))
+;; 	  (lambda (frame)
+;; 		(paint-up frame)
+;; 		(paint-down frame)))))
+
+(define (below-painter painter1 painter2)
+  (rotate90 (beside-painter (rotate270 einstein)
+							(rotate270 myname))))
+
+;;; Levels of language for robust design
+
+;;; 2.52
+
+;;; 2.52a
+
+(define smile-wave-segments
+ (list
+  (make-segment
+   (make-vect 0.006 0.840)
+   (make-vect 0.155 0.591))
+  (make-segment
+   (make-vect 0.006 0.635)
+   (make-vect 0.155 0.392))
+  (make-segment
+   (make-vect 0.304 0.646)
+   (make-vect 0.155 0.591))
+  (make-segment
+   (make-vect 0.298 0.591)
+   (make-vect 0.155 0.392))
+  (make-segment
+   (make-vect 0.304 0.646)
+   (make-vect 0.403 0.646))
+  (make-segment
+   (make-vect 0.298 0.591)
+   (make-vect 0.354 0.492))
+  (make-segment
+   (make-vect 0.403 0.646)
+   (make-vect 0.348 0.845))
+  (make-segment
+   (make-vect 0.354 0.492)
+   (make-vect 0.249 0.000))
+  (make-segment
+   (make-vect 0.403 0.000)
+   (make-vect 0.502 0.293))
+  (make-segment
+   (make-vect 0.502 0.293)
+   (make-vect 0.602 0.000))
+  (make-segment
+   (make-vect 0.348 0.845)
+   (make-vect 0.403 0.999))
+  (make-segment
+   (make-vect 0.602 0.999)
+   (make-vect 0.652 0.845))
+  (make-segment
+   (make-vect 0.652 0.845)
+   (make-vect 0.602 0.646))
+  (make-segment
+   (make-vect 0.602 0.646)
+   (make-vect 0.751 0.646))
+  (make-segment
+   (make-vect 0.751 0.646)
+   (make-vect 0.999 0.343))
+  (make-segment
+   (make-vect 0.751 0.000)
+   (make-vect 0.597 0.442))
+  (make-segment
+   (make-vect 0.430 0.875)
+   (make-vect 0.480 0.875))
+  (make-segment
+   (make-vect 0.530 0.875)
+   (make-vect 0.580 0.875))
+  (make-segment
+   (make-vect 0.460 0.75)
+   (make-vect 0.540 0.75))
+  (make-segment
+   (make-vect 0.460 0.75)
+   (make-vect 0.400 0.80))
+  (make-segment
+   (make-vect 0.540 0.75)
+   (make-vect 0.600 0.80))
+  (make-segment
+   (make-vect 0.597 0.442)
+   (make-vect 0.999 0.144))))
+
+(define smile-wave (segments->painter smile-wave-segments))
+
+;;; 2.52b
+
+(define (corner-split-mod painter n)
+  (if (= n 0)
+	  painter
+	  (let ((top-left (up-split painter (- n 1)))
+			(bottom-right (right-split painter (- n 1)))
+			(corner (corner-split painter (- n 1))))
+		(beside (below painter top-left)
+				(below bottom-right corner)))))
+
+;;; 2.52c
+
+(define (square-limit-mod painter n)
+  (let ((combine4 (square-of-four flip-vert rotate180
+								  identity flip-horiz)))
+	(combine4 (corner-split painter n))))
