@@ -1460,47 +1460,47 @@
 
 ;;; Sets as binary trees
 
-(define (entry tree) (car tree))
-(define (left-branch tree) (cadr tree))
-(define (right-branch tree) (caddr tree))
-(define (make-tree entry left right)
-  (list entry left right))
-(define (element-of-set? x set)
-  (cond ((null? set) false)
-		((= x (entry set)) true)
-		((< x (entry set))
-		 (element-of-set? x (left-branch set)))
-		((> x (entry set))
-		 (element-of-set? x (right-branch set)))))
-(define (adjoin-set x set)
-  (cond ((null? set) (make-tree x '() '()))
-		((= x (entry set)) set)
-		((< x (entry set))
-		 (make-tree (entry set)
-					(adjoin-set x (left-branch set))
-					(right-branch set)))
-		((> x (entry set))
-		 (make-tree (entry set) (left-branch set)
-					(adjoin-set x (right-branch set))))))
-;;; 2.63
+;; (define (entry tree) (car tree))
+;; ;; (define (left-branch tree) (cadr tree))
+;; ;; (define (right-branch tree) (caddr tree))
+;; (define (make-tree entry left right)
+;;   (list entry left right))
+;; (define (element-of-set? x set)
+;;   (cond ((null? set) false)
+;; 		((= x (entry set)) true)
+;; 		((< x (entry set))
+;; 		 (element-of-set? x (left-branch set)))
+;; 		((> x (entry set))
+;; 		 (element-of-set? x (right-branch set)))))
+;; (define (adjoin-set x set)
+;;   (cond ((null? set) (make-tree x '() '()))
+;; 		((= x (entry set)) set)
+;; 		((< x (entry set))
+;; 		 (make-tree (entry set)
+;; 					(adjoin-set x (left-branch set))
+;; 					(right-branch set)))
+;; 		((> x (entry set))
+;; 		 (make-tree (entry set) (left-branch set)
+;; 					(adjoin-set x (right-branch set))))))
+;; ;;; 2.63
 
-(define (tree->list-1 tree)
-  (if (null? tree)
-	  '()
-	  (append (tree->list-1 (left-branch tree))
-			  (cons (entry tree)
-					(tree->list-1
-					 (right-branch tree))))))
-(define (tree->list-2 tree)
-  (define (copy-to-list tree result-list)
-	(if (null? tree)
-		result-list
-		(copy-to-list (left-branch tree)
-					  (cons (entry tree)
-							(copy-to-list
-							 (right-branch tree)
-							 result-list)))))
-  (copy-to-list tree '()))
+;; (define (tree->list-1 tree)
+;;   (if (null? tree)
+;; 	  '()
+;; 	  (append (tree->list-1 (left-branch tree))
+;; 			  (cons (entry tree)
+;; 					(tree->list-1
+;; 					 (right-branch tree))))))
+;; (define (tree->list-2 tree)
+;;   (define (copy-to-list tree result-list)
+;; 	(if (null? tree)
+;; 		result-list
+;; 		(copy-to-list (left-branch tree)
+;; 					  (cons (entry tree)
+;; 							(copy-to-list
+;; 							 (right-branch tree)
+;; 							 result-list)))))
+;;   (copy-to-list tree '()))
 
 ;;; 2.63a
 ;;; The two procedures produce the same result for every tree.
@@ -1512,29 +1512,29 @@
 
 ;;; 2.64
 
-(define (list->tree elements)
-  (car (partial-tree elements (length elements))))
-(define (partial-tree elts n)
-  (if (= n 0)
-	  (cons '() elts)
-	  (let ((left-size (quotient (- n 1) 2)))
-		(let ((left-result
-			   (partial-tree elts left-size)))
-		  (let ((left-tree (car left-result))
-				(non-left-elts (cdr left-result))
-				(right-size (- n (+ left-size 1))))
-			(let ((this-entry (car non-left-elts))
-				  (right-result
-				   (partial-tree
-					(cdr non-left-elts)
-					right-size)))
-			  (let ((right-tree (car right-result))
-					(remaining-elts
-					 (cdr right-result)))
-				(cons (make-tree this-entry
-								 left-tree
-								 right-tree)
-					  remaining-elts))))))))
+;; (define (list->tree elements)
+;;   (car (partial-tree elements (length elements))))
+;; (define (partial-tree elts n)
+;;   (if (= n 0)
+;; 	  (cons '() elts)
+;; 	  (let ((left-size (quotient (- n 1) 2)))
+;; 		(let ((left-result
+;; 			   (partial-tree elts left-size)))
+;; 		  (let ((left-tree (car left-result))
+;; 				(non-left-elts (cdr left-result))
+;; 				(right-size (- n (+ left-size 1))))
+;; 			(let ((this-entry (car non-left-elts))
+;; 				  (right-result
+;; 				   (partial-tree
+;; 					(cdr non-left-elts)
+;; 					right-size)))
+;; 			  (let ((right-tree (car right-result))
+;; 					(remaining-elts
+;; 					 (cdr right-result)))
+;; 				(cons (make-tree this-entry
+;; 								 left-tree
+;; 								 right-tree)
+;; 					  remaining-elts))))))))
 
 ;;; 2.64a
 
@@ -1563,36 +1563,36 @@
 
 ;;; 2.65
 
-(define (intersection-set set1 set2)
-  (define (intersection-list set1 set2)
-	(if (or (null? set1) (null? set2))
-		'()
-		(let ((x1 (car set1)) (x2 (car set2)))
-		  (cond ((= x1 x2)
-				 (cons x1 (intersection-set (cdr set1)
-											(cdr set2))))
-				((< x1 x2)
-				 (intersection-set (cdr set1) set2))
-				((< x2 x1)
-				 (intersection-set set1 (cdr set2)))))))
-  (list->tree (intersection-list (tree->list-2 set1)
-								 (tree->list-2 set2))))
+;; (define (intersection-set set1 set2)
+;;   (define (intersection-list set1 set2)
+;; 	(if (or (null? set1) (null? set2))
+;; 		'()
+;; 		(let ((x1 (car set1)) (x2 (car set2)))
+;; 		  (cond ((= x1 x2)
+;; 				 (cons x1 (intersection-set (cdr set1)
+;; 											(cdr set2))))
+;; 				((< x1 x2)
+;; 				 (intersection-set (cdr set1) set2))
+;; 				((< x2 x1)
+;; 				 (intersection-set set1 (cdr set2)))))))
+;;   (list->tree (intersection-list (tree->list-2 set1)
+;; 								 (tree->list-2 set2))))
 
-(define (union-set set1 set2)
-  (define (union-list set1 set2)
-	(cond ((null? set1) set2)
-		  ((null? set2) set1)
-		  (else
-		   (let ((x1 (car set1)) (x2 (car set2)))
-			 (cond ((= x1 x2)
-					(cons x1 (union-set (cdr set1)
-										(cdr set2))))
-				   ((< x1 x2)
-					(cons x1 (union-set (cdr set1) set2)))
-				   ((< x2 x1)
-					(cons x2 (union-set set1 (cdr set2)))))))))
-  (list->tree (union-list (tree->list-2 set1)
-						  (tree->list-2 set2))))
+;; (define (union-set set1 set2)
+;;   (define (union-list set1 set2)
+;; 	(cond ((null? set1) set2)
+;; 		  ((null? set2) set1)
+;; 		  (else
+;; 		   (let ((x1 (car set1)) (x2 (car set2)))
+;; 			 (cond ((= x1 x2)
+;; 					(cons x1 (union-set (cdr set1)
+;; 										(cdr set2))))
+;; 				   ((< x1 x2)
+;; 					(cons x1 (union-set (cdr set1) set2)))
+;; 				   ((< x2 x1)
+;; 					(cons x2 (union-set set1 (cdr set2)))))))))
+;;   (list->tree (union-list (tree->list-2 set1)
+;; 						  (tree->list-2 set2))))
 
 ;;; Sets and information retrieval
 
@@ -1604,13 +1604,172 @@
 
 ;;; 2.66
 
-(define (lookup given-key set-of-records)
-  (cond ((null? set-of-records) false)
-		((equal? given-key (key (entry set-of-records)))
-		 (entry set-of-records))
-		((< given-key (key (entry set-of-records)))
-		 (lookup given-key (left-branch set-of-records)))
-		((> given-key (key (entry set-of-records)))
-		 (lookup given-key (right-branch set-of-records)))))
+;; (define (lookup given-key set-of-records)
+;;   (cond ((null? set-of-records) false)
+;; 		((equal? given-key (key (entry set-of-records)))
+;; 		 (entry set-of-records))
+;; 		((< given-key (key (entry set-of-records)))
+;; 		 (lookup given-key (left-branch set-of-records)))
+;; 		((> given-key (key (entry set-of-records)))
+;; 		 (lookup given-key (right-branch set-of-records)))))
 
 ;;; Huffman Encoding Trees
+
+(define (make-leaf symbol weight) (list 'leaf symbol weight))
+(define (leaf? object) (eq? (car object) 'leaf))
+(define (symbol-leaf x) (cadr x))
+(define (weight-leaf x) (caddr x))
+
+(define (make-code-tree left right)
+  (list left
+		right
+		(append (symbols left) (symbols right))
+		(+ (weight left) (weight right))))
+(define (left-branch tree) (car tree))
+(define (right-branch tree) (cadr tree))
+(define (symbols tree)
+  (if (leaf? tree)
+	  (list (symbol-leaf tree))
+	  (caddr tree)))
+(define (weight tree)
+  (if (leaf? tree)
+	  (weight-leaf tree)
+	  (cadddr tree)))
+
+(define (decode bits tree)
+  (define (decode-1 bits current-branch)
+	(if (null? bits)
+		'()
+		(let ((next-branch
+			   (choose-branch (car bits) current-branch)))
+		  (if (leaf? next-branch)
+			  (cons (symbol-leaf next-branch)
+					(decode-1 (cdr bits) tree))
+			  (decode-1 (cdr bits) next-branch)))))
+  (decode-1 bits tree))
+
+(define (choose-branch bit branch)
+  (cond ((= bit 0) (left-branch branch))
+		((= bit 1) (right-branch branch))
+		(else (display "bad bit: CHOOSE-BRANCH" bit))))
+
+;;; Sets of weighted elements
+
+(define (adjoin-set x set)
+  (cond ((null? set) (list x))
+		((< (weight x) (weight (car set))) (cons x set))
+		(else (cons (car set)
+					(adjoin-set x (cdr set))))))
+
+(define (make-leaf-set pairs)
+  (if (null? pairs)
+	  '()
+	  (let ((pair (car pairs)))
+		(adjoin-set (make-leaf (car pair)    ; symbol
+							   (cadr pair))  ; frequency
+					(make-leaf-set (cdr pairs))))))
+
+
+;;; 2.67
+
+(define sample-tree
+  (make-code-tree (make-leaf 'A 4)
+				  (make-code-tree
+				   (make-leaf 'B 2)
+				   (make-code-tree
+					(make-leaf 'D 1)
+					(make-leaf 'C 1)))))
+(define sample-message '(0 1 1 0 0 1 0 1 0 1 1 1 0))
+
+;;; result ADABBCA
+
+;;; 2.68
+
+(define (encode message tree)
+  (if (null? message)
+	  '()
+	  (append (encode-symbol (car message) tree)
+			  (encode (cdr message) tree))))
+
+(define (encode-symbol symbol tree)
+  (define (element-of-set? x set)
+    (cond ((null? set) false)
+  		((equal? x (car set)) true)
+  		(else (element-of-set? x (cdr set)))))
+  (define (in? symbol branch)
+	(if (leaf? branch)
+		(eq? symbol (symbol-leaf branch))
+		(element-of-set? symbol (symbols branch))))
+  (cond ((leaf? tree) '())
+		((in? symbol (left-branch tree))
+		 (cons 0 (encode-symbol symbol (left-branch tree))))
+		((in? symbol (right-branch tree))
+		 (cons 1 (encode-symbol symbol (right-branch tree))))))
+
+;;; 2.69
+
+(define (generate-huffman-tree pairs)
+  (successive-merge (make-leaf-set pairs)))
+
+(define (successive-merge leaf-set)
+  (if (= (length leaf-set) 1)
+	  (car leaf-set)
+	  (let ((first (car leaf-set))
+			(second (cadr leaf-set))
+			(rest (cddr leaf-set)))
+		(successive-merge (adjoin-set (make-code-tree first second)
+									  rest)))))
+
+;;; 2.70
+
+(define song-pairs
+  '((A 2) (GET 2) (SHA 3) (WAH 1)
+	(BOOM 1) (JOB 2) (NA 16) (YIP 9)))
+(define song-tree (generate-huffman-tree song-pairs))
+(define song '(GET A JOB
+			   SHA NA NA NA NA NA NA NA NA
+			   GET A JOB
+			   SHA NA NA NA NA NA NA NA NA
+			   WAH YIP YIP YIP YIP YIP YIP YIP YIP YIP
+			   SHA BOOM))
+(define encoded-song (encode song song-tree))
+
+;;; the encoding required 84 bits.
+;;; If we used a fixed-length code we will need (* 3 36) -> 108 bits
+
+;;; 2.71
+
+;;; n = 5
+;;;    {1 2 4 8 16}
+;;;        /     \
+;;;    {1 2 4 8}  16
+;;;     /     \
+;;;  {1 2 4}   8
+;;;   /     \
+;;; {1 2}    4
+;;;  / \
+;;; 1  2
+
+;;; n = 10
+;;; {1 2 4 8 16 32 64 128 256 512}
+;;;                      /    \
+;;; {1 2 4 8 16 32 64 128 256}   512
+;;;                    /     \
+;;; {1 2 4 8 16 32 64 128}   256
+;;;                  /   \
+;;; {1 2 4 8 16 32 64}  128
+;;;               / \
+;;; {1 2 4 8 16 32}  64
+;;;            / \
+;;;  {1 2 4 8 16} 32
+;;;           /  \
+;;;    {1 2 4 8}  16
+;;;         / \
+;;;    {1 2 4} 8
+;;;      /  \
+;;;   {1 2} 4
+;;;    / \
+;;;   2   1
+
+;;; We just need one bit for the most frequent symbol, for the least frequent
+;;; symbol we will need n-1 bits.
