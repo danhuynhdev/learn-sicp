@@ -10,7 +10,7 @@
 	   (lambda (x y) (tag (* x y))))
   (put 'div '(scheme-number scheme-number)
 	   (lambda (x y) (tag (/ x y))))
-  (put 'equ? 'scheme-number (lambda (x) (= x 0)))
+  (put '=zero? 'scheme-number (lambda (x) (= x 0)))
   (put 'make 'scheme-number (lambda (x) (tag x)))
   'done)
 
@@ -45,7 +45,7 @@
 	   (lambda (x y) (tag (mul-rat x y))))
   (put 'div '(rational rational)
 	   (lambda (x y) (tag (div-rat x y))))
-  (put 'equ? 'rational (lambda (x) (= (numer x) 0))
+  (put '=zero? 'rational (lambda (x) (= (numer x) 0))
   (put 'make 'rational
 	   (lambda (n d) (tag (make-rat n d))))
   'done)
@@ -79,7 +79,7 @@
 	   (lambda (z1 z2) (tag (mul-complex z1 z2))))
   (put 'div '(complex complex)
 	   (lambda (z1 z2) (tag (div-complex z1 z2))))
-  (put 'equ? 'complex (lambda (x) (= (real-part x) (imag-part x) 0)))
+  (put '=zero? 'complex (lambda (x) (= (real-part x) (imag-part x) 0)))
   (put 'make-from-real-imag 'complex
 	   (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
