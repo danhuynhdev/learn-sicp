@@ -1,0 +1,10 @@
+(define (ripple-carry-adder A B S C)
+  (if (null? A)
+      'ok
+      (let ((Ai (car A))
+            (Bi (car B))
+            (Si (car S))
+            (Ci (make-wire)))
+        (full-adder Ai Bi C Si Ci)
+        (ripple-carry-adder (cdr A) (cdr B)
+                            (cdr S) Ci))))
