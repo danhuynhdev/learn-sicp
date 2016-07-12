@@ -1,0 +1,5 @@
+(define (stream-limit s tolerance)
+  (if (< (abs (- (stream-ref s 0) (stream-ref s 1)))
+         tolerance)
+      (stream-ref s 1)
+      (stream-limit (stream-cdr s))))
